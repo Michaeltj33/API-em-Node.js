@@ -1,0 +1,26 @@
+{
+  "name": "api-node",
+  "version": "1.0.0",
+  "description": "Criação de uma Api em Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "api",
+    "node"
+  ],
+  "author": "Michael Anderson da Silva",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",    
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.3"
+  }
+}
