@@ -14,7 +14,8 @@
   "author": "Michael Anderson da Silva",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.2",    
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1"

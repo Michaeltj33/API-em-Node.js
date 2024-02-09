@@ -5,6 +5,7 @@ const bodyParse = require('body-parser')
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedido = require ('./routes/pedidos')
+const rotaUsuarios = require('./routes/usuarios')
 
 app.use(morgan('dev'))
 app.use('/uploads', express.static('uploads'))
@@ -14,6 +15,7 @@ app.use(bodyParse.json()) //so aceita json como entrada no body
 //rotas
 app.use('/produtos',rotaProdutos) 
 app.use('/pedidos',rotaPedido)
+app.use('/usuarios',rotaUsuarios)
 
 app.use((req,res,next)=>{
     res.header('Access-Control-Allow-Origin', '*')
