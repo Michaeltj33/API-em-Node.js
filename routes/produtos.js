@@ -2,11 +2,12 @@ const express = require('express')
 const router = express.Router()
 const mysql = require('../mysql').pool
 const multer = require('multer')
+const login = require('../middleware/login')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/')
-    },    
+    },
     filename: function (req, file, cb) {
         cb(null, new Date().toDateString().replace(/\s/g, '') + file.originalname)
     }
@@ -59,7 +60,7 @@ router.get('/', (req, res, next) => {
                             id_produto: prod.id_produto,
                             nome: prod.nome,
                             preco: prod.preco,
-                            imagem_produto:prod.imagem_produto,
+                            imagem_produto: prod.imagem_produto,
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna os detalhes de um produto específico',
@@ -76,7 +77,7 @@ router.get('/', (req, res, next) => {
 
 
 //Insere um produtos
-router.post('/', upload.single('produto_imagem'), (req, res, next) => {
+router.post('/', login.obrigatorio, upload.single('produto_imagem'), (req, res, next) => {
     console.log(req.file)
     mysql.getConnection((error, conn) => {
         //Verificar se houver erro de conexão
@@ -106,7 +107,7 @@ router.post('/', upload.single('produto_imagem'), (req, res, next) => {
                         id_produto: resultado.id_produto,
                         nome: req.body.nome,
                         preco: req.body.preco,
-                        imagem_produto:req.file.path,
+                        imagem_produto: req.file.path,
                         request: {
                             tipo: "POST",
                             descricao: 'Insere um produto',
@@ -171,7 +172,7 @@ router.get('/:id_produto', (req, res, next) => {
 })
 
 //Altera um produto
-router.patch('/', (req, res, next) => {
+router.patch('/', login.obrigatorio, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         //Verificar se houver erro de conexão
         if (error) {
@@ -215,7 +216,7 @@ router.patch('/', (req, res, next) => {
 })
 
 //Deleta um produto
-router.delete('/', (req, res, next) => {
+router.delete('/', login.obrigatorio, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         //Verificar se houver erro de conexão
         if (error) {
