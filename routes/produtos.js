@@ -25,18 +25,18 @@ const FileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 1024 * 1024 * 1 //Max 5M
+        fileSize: 1024 * 1024 * 1 //Max 1M
     },
     fileFilter: FileFilter
 })
 
 router.get('/', produtoController.getProdutos)
-router.get('/:id_produto', produtoController.getUmproduto)
+router.get('/:id_produto', produtoController.getUmProduto)
 
 router.post('/',
     login.obrigatorio,
-    upload.single('produto_imagem'),
-    produtoController.postPorduto)
+    upload.single('imagem_produto'),
+    produtoController.postProduto)
 
 router.patch('/', login.obrigatorio, produtoController.updateProduto)
 
