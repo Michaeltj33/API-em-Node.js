@@ -1,9 +1,31 @@
 const mysql = require('../mysql')
+const redis = require('../redis')
+const client = redis.client
 
 //Retorna todos os produtos
 exports.getProdutos = async (req, res, next) => {
-    try {
-        const result = await mysql.execute("SELECT * FROM produtos")
+    try {       
+        const limit = req.query._limit || 1000
+        
+        const productsFromCache = await client.get('getProdutos')
+        const isProductsFromStale = !(await client.get('getProdutos:validation'))
+
+        if (isProductsFromStale) {
+            const isRefetching = !!(await client.get('getProdutos:id-refetaching'))
+            console.log({ isRefetching })
+            if (!isRefetching) {
+                await client.set('getProdutos:id-refetaching', 'true', { EX: 20 })
+                console.log('cache is stale - refetching...')
+                setTimeout(async () => {
+                    const resultVerify = await mysql.execute("SELECT * FROM produtos order by id_produto limit " + limit)
+                    await client.set('getProdutos', JSON.stringify(resultVerify))
+                    await client.set('getProdutos:validation', "true", { EX: 5 })
+                    await client.del('getProdutos:id-refetaching')
+                },0)
+
+            }
+        }
+        result = await mysql.execute("SELECT * FROM produtos order by id_produto limit " + limit)
         const response = {
             quantidade: result.length,
             produtos: result.map(prod => {
@@ -20,7 +42,13 @@ exports.getProdutos = async (req, res, next) => {
                 }
             })
         }
-        return res.status(200).send(response)
+
+        if (productsFromCache) {           
+            return res.status(200).json(response)
+        }
+
+        await client.set('getProdutos', JSON.stringify(response))
+        return res.status(200).json(response)
     } catch (error) {
         returnError(error, res)
     }
@@ -45,7 +73,7 @@ exports.postProduto = async (req, res, next) => {
                 }
             }
         }
-        return res.status(201).send(response)
+        return res.status(201).json(response)
 
     } catch (error) {
         returnError(error, res)
@@ -75,7 +103,7 @@ exports.getUmProduto = async (req, res, next) => {
                 }
             }
         }
-        return res.status(201).send(response)
+        return res.status(201).json(response)
     } catch (error) {
         returnError(error, res)
     }
@@ -99,7 +127,7 @@ exports.updateProduto = async (req, res, next) => {
                 }
             }
         }
-        return res.status(202).send(response)
+        return res.status(202).json(response)
     } catch (error) {
         returnError(error, res)
     }
@@ -123,7 +151,7 @@ exports.deleteProduto = async (req, res, next) => {
                 }
             }
         }
-        res.status(202).send(response)
+        res.status(202).json(response)
     } catch (error) {
         returnError(error, res)
     }

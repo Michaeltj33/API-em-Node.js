@@ -33,10 +33,15 @@ const upload = multer({
 router.get('/', produtoController.getProdutos)
 router.get('/:id_produto', produtoController.getUmProduto)
 
+
 router.post('/',
     login.obrigatorio,
     upload.single('imagem_produto'),
     produtoController.postProduto)
+
+/* router.post('/',   
+    upload.single('imagem_produto'),
+    produtoController.postProduto) */
 
 router.patch('/', login.obrigatorio, produtoController.updateProduto)
 
