@@ -13,7 +13,7 @@ Na sua linha de comando:
 $ git clone https://github.com/Michaeltj33/API-em-Node.js
 
 # Vá para o repositório Back-end
-$ cd API-Rest-NodeJS
+$ cd API-em-Node
 
 # Instale as dependencias
 $ npm install
